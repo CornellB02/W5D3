@@ -9,12 +9,19 @@ CREATE TABLE quetsions (
     body TEXT
     title TEXT
     author_id INTEGER
+    FOREIGN KEY (author_id) REFERENCES user(id)
 );
 
 CREATE TABLE quetsions_follows (
+    id INTEGER
     users_id INTEGER
     quetsions_id INTEGER
 );
+
+CREATE TABLE replies (
+    id INTEGER PRIMARY KEY 
+    
+)
 
 
 
