@@ -43,22 +43,22 @@ class Questions
 
     def create
         raise "#{self} already in database" if self.id 
-        QuestionsDBConnection.instance.execute(<<-SQL, self.id, self.body, self.title, self.author_id)
+        QuestionsDBConnection.instance.execute(<<-SQL, self.body, self.title, self.author_id)
         INSERT INTO 
-            questions (id, body, title, authour_id)
+            questions (body, title, author_id)
         VALUES
-            (?,?,?,?)
+            (?,?,?)
         SQL
-        self.id = QuestionsDBConnection.instance.last_instance_row_id z
+        self.id = QuestionsDBConnection.instance.last_instance_row_id
     end
 
     def update
     raise "#{self} not in database" unless self.id
-    QuestionsDBConnection.instance.execute(<<-SQL, self.id, self.body, self.title, self.author_id)
+    QuestionsDBConnection.instance.execute(<<-SQL, self.body, self.title, self.author_id)
       UPDATE
         questions
       SET
-        id = ?, body = ?, title = ?, author_id = ? 
+        body = ?, title = ?, author_id = ? 
       WHERE
         id = ?
     SQL
