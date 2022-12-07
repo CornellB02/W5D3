@@ -59,4 +59,15 @@ INSERT INTO
     questions (body, title, author_id)
 VALUES
     ('Whats your favorite food?', 'Foods', (SELECT id FROM users WHERE fname = 'Yen'));
+    ('Whats your favorite color?', 'Yellow', (SELECT id FROM users WHERE fname = 'CJ'))
 
+INSERT INTO 
+    questions_follows(id, users_id, questions_id)
+VALUES
+    (1,2,1),
+    (2,1,2)
+
+INSERT INTO 
+    replies (parent_reply_id, body, questions_id, replier_id)
+VALUES 
+    (NULL, 'PIZZA', (select id from questions where title = 'Foods'))
