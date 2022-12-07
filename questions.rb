@@ -29,13 +29,13 @@ class Questions
 
     def self.find_by_id(id)
         question = QuestionsDBConnection.instance.execute(<<-SQL, id)
-         SELECT 
-        *
-         FROM 
-        questions 
-         WHERE 
-        id = ?
-    SQL
+        SELECT 
+            *
+        FROM 
+            questions 
+        WHERE 
+            id = ?
+        SQL
         return nil unless question.length > 0
 
         question.map {|datum| Questions.new(question.first)}
@@ -49,21 +49,51 @@ class Questions
         VALUES
             (?,?,?,?)
         SQL
+        self.id = QuestionsDBConnection.instance.last_instance_row_id z
     end
-    self.id = QuestionsDBConnection.instance.last_instance_row_id z
+
+    def update
+    raise "#{self} not in database" unless self.id
+    QuestionsDBConnection.instance.execute(<<-SQL, self.id, self.body, self.title, self.author_id)
+      UPDATE
+        questions
+      SET
+        id = ?, body = ?, title = ?, author_id = ? 
+      WHERE
+        id = ?
+    SQL
+    end
 end
 
 
 
-# class User 
+class Users
 
-#     attr_accessor :id, :fname, :lname  
+    attr_accessor :id, :fname, :lname  
 
-#     def initialize(options)
-#         @id = options['id']
-#         @fname = options['fname']
-#         @lname = options['lname']
-#     end
+    def self.all
+        data = UserDBConnection.instance.execute("SELECT * FROM users")
+        data.map {|datum| Users.new(datum)}  
+    end
 
+    def initialize(options)
+        @id = options['id']
+        @fname = options['fname']
+        @lname = options['lname']
+    end
 
-# end
+    def self.find_by_name(fname, lname)
+        person = UsersDBConnection.instance.execute(<<-SQL, self.id, self.fname, self.lname)
+        SELECT
+            *
+        FROM
+            users
+      WHERE
+        fname = ?
+    SQL
+    return nil unless person.length > 0 
+
+    Users.new(person.first)
+    end
+
+end
