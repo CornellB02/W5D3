@@ -1,8 +1,8 @@
 PRAGMA foreign_keys = ON;
-DROP users IF EXISTS;
-DROP quetsions IF EXISTS;
-DROP quetsions_follows IF EXISTS;
-DROP replies IF EXISTS; 
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS questions;
+DROP TABLE IF EXISTS questions_follows;
+DROP TABLE IF EXISTS replies; 
 
 CREATE TABLE users (
     id INTEGER PRIMARY KEY,
@@ -10,54 +10,52 @@ CREATE TABLE users (
     lname TEXT NOT NULL
 );
 
-CREATE TABLE quetsions (
+CREATE TABLE questions (
     id INTEGER PRIMARY KEY,
     body TEXT NOT NULL,
     title TEXT NOT NULL,
     author_id INTEGER NOT NULL,
 
-    FOREIGN KEY (author_id) REFERENCES user(id)
+    FOREIGN KEY (author_id) REFERENCES users(id)
 );
 
-CREATE TABLE quetsions_follows (
-    id INTEGER NOT NULL,
+CREATE TABLE questions_follows (
+    id INTEGER PRIMARY KEY,
     users_id INTEGER NOT NULL,
-    quetsions_id INTEGER NOT NULL
+    questions_id INTEGER NOT NULL,
 
-    FOREIGN KEY (users_id) REFERENCES user(id)
-    FOREIGN KEY (quetsions_id) REFERENCES quetsions(id)
+    FOREIGN KEY (users_id) REFERENCES users(id)
+    FOREIGN KEY (questions_id) REFERENCES questions(id)
 );
 
 CREATE TABLE replies (
     id INTEGER PRIMARY KEY,
     parent_reply_id INTEGER, 
     body TEXT NOT NULL,
-    quetsions_id INTEGER,
-    users_id INTEGER
+    questions_id INTEGER NOT NULL,
+    replier_id INTEGER NOT NULL,
 
-    FOREIGN KEY (user_id) REFERENCES user(id)
-    FOREIGN KEY (questions_id) REFERENCES quetsions(id)
+    FOREIGN KEY (replier_id) REFERENCES users(id)
+    FOREIGN KEY (questions_id) REFERENCES questions(id)
     FOREIGN KEY (parent_reply_id) REFERENCES replies(id)
-    FOREIGN KEY (id) REFERENCES quetsions_follows(id)
 );
 
-CREATE TABLE question_likes (
-    id INTEGER,
-    user_like INTEGER,
-    user_id INTEGER,
-    quetsions_id INTEGER
+CREATE TABLE questions_likes (
+    id INTEGER PRIMARY KEY,
+    liker_id INTEGER NOT NULL,
+    questions_id INTEGER NOT NULL,
 
-    FOREIGN KEY (user_id) REFERENCES user(id)
-    FOREIGN KEY (questions_id) REFERENCES quetsions(id)
-)
-
-INSERT INTO
-    user (fname, lname)
-VALUES
-    ('Yen', 'Lee')
-    ('CJ', 'B')
+    FOREIGN KEY (liker_id) REFERENCES users(id)
+    FOREIGN KEY (questions_id) REFERENCES questions(id)
+);
 
 INSERT INTO
-    quetsions (body, title, author_id)
+    users (fname, lname)
 VALUES
-    ('Whats your favorite food?', 'Foods', (SELECT id FROM user WHERE fname = 'Yen'));
+    ('Yen', 'Lee'),
+    ('CJ', 'B');
+
+INSERT INTO
+    questions (body, title, author_id)
+VALUES
+    ('Whats your favorite food?', 'Foods', (SELECT id FROM users WHERE fname = 'Yen'));
