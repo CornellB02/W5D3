@@ -59,3 +59,4 @@ INSERT INTO
     questions (body, title, author_id)
 VALUES
     ('Whats your favorite food?', 'Foods', (SELECT id FROM users WHERE fname = 'Yen'));
+
